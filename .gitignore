@@ -1,0 +1,28 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+build/
+dist/
+*.egg-info/
+.idea/
+.vscode/
+.pytest_cache/
+.mypy_cache/
+
+# Generated output files
+llms.txt
+llms-full.txt
+llms.json
+sitemap.xml
+sitemap_index.xml
+*_sitemap.xml
+
+# Test output
+*.log
+*.tmp
+*.bak

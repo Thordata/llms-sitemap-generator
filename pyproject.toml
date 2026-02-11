@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llms-sitemap-generator"
+version = "0.1.0"
+description = "AI-friendly llms.txt & sitemap generator for websites. Crawl or import sitemaps, filter pages, and generate curated indexes for LLMs."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+  { name = "Thordata", email = "contact@thordata.ai" }
+]
+keywords = ["llms.txt", "sitemap", "seo", "web-crawler", "llm", "openai"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "License :: OSI Approved :: MIT License",
+  "Intended Audience :: Developers",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Software Development :: Build Tools"
+]
+dependencies = [
+  "requests>=2.31.0",
+  "PyYAML>=6.0.1",
+]
+
+[project.optional-dependencies]
+gui = [
+  "PyQt5>=5.15.0",
+]
+dev = [
+  "pytest>=7.0.0",
+  "pyinstaller>=6.0.0",
+]
+
+[project.scripts]
+llms-sitemap-generator = "llms_sitemap_generator.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+

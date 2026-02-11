@@ -1,0 +1,124 @@
+# LLMS Sitemap Generator - Generic Site Example
+# This is a generic example configuration that works for most websites
+
+site:
+  base_url: "https://example.com"
+  default_language: "en"
+  allowed_domains:
+    - "example.com"
+    - "www.example.com"
+    # Add more subdomains as needed
+    # - "docs.example.com"
+    # - "blog.example.com"
+
+sources:
+  # 1) Main sitemap (recommended if available)
+  - type: "sitemap"
+    url: "https://example.com/sitemap.xml"
+  
+  # 2) Optional: Crawl from homepage or specific sections
+  # Useful when sitemap doesn't cover everything
+  - type: "crawl"
+    url: "https://example.com"
+    max_depth: 3
+    max_urls: 1000
+  
+  # 3) Optional: Crawl blog section separately
+  - type: "crawl"
+    url: "https://example.com/blog"
+    max_depth: 4
+    max_urls: 500
+  
+  # 4) Optional: Static URLs for important pages
+  - type: "static"
+    urls:
+      - "https://example.com/important-page"
+      - "https://example.com/another-page"
+
+filters:
+  include:
+    # Homepage
+    - pattern: "^/$"
+      group: "Home"
+      priority: 200
+
+    # Products & Solutions
+    - pattern: "^/products"
+      group: "Products"
+      priority: 150
+
+    # Pricing
+    - pattern: "^/pricing"
+      group: "Pricing"
+      priority: 90
+
+    # Documentation
+    - pattern: "^/docs"
+      group: "Docs"
+      priority: 120
+    - pattern: "^/documentation"
+      group: "Docs"
+      priority: 120
+
+    # Blog
+    - pattern: "^/blog"
+      group: "Blog"
+      priority: 100
+
+    # Use Cases & Resources
+    - pattern: "^/use-cases"
+      group: "Use Cases"
+      priority: 80
+    - pattern: "^/integrations"
+      group: "Integrations"
+      priority: 80
+
+  exclude:
+    # Exclude specific paths
+    - pattern: "newsroom"
+    - pattern: "/news"
+    - pattern: "^/careers"
+    - pattern: "^/changelog"
+    
+    # Exclude infrastructure paths
+    - pattern: "^/cdn-cgi/"
+    - pattern: "^/admin"
+    - pattern: "/login"
+
+  max_urls: 5000  # Global limit for collected URLs
+
+  # Auto-grouping: automatically group by path segment
+  auto_group: true
+
+  # Group limits (optional, limits per group)
+  group_limits:
+    Products: 200
+    Pricing: 50
+    Blog: 500
+    Docs: 300
+
+  # Built-in default excludes (search, feeds, etc.)
+  use_default_excludes: true
+
+  # Auto-filter languages (keep only default language for llms.txt)
+  # Note: sitemap.xml will include all languages regardless of this setting
+  auto_filter_languages: true  # llms.txt only includes English (en), sitemap.xml includes all languages
+
+  # Profiles for different output tiers
+  profiles:
+    minimal:
+      include_groups: ["Home", "Products", "Pricing"]
+    recommended:
+      include_groups: ["Home", "Products", "Pricing", "Docs", "Blog"]
+    full:
+      include_groups: ["*"]
+
+output:
+  llms_txt: "llms.txt"
+  llms_full_txt: "llms-full.txt"
+  llms_json: "llms.json"
+  # Generate sitemap.xml (includes all URLs, not filtered)
+  sitemap_xml: "sitemap.xml"
+  sitemap_apply_filters: false  # sitemap includes all collected URLs
+  # Generate sitemap_index.xml（multi-subdomain sitemap index）
+  sitemap_index: "sitemap_index.xml"

@@ -1,0 +1,4 @@
+# GUI 工具依赖
+llms-sitemap-generator
+PyQt5>=5.15.0
+pyinstaller>=5.0.0

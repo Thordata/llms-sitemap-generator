@@ -1,0 +1,138 @@
+# LLMS Sitemap Generator config
+# Enhanced configuration for thordata.com with subdomain support
+
+site:
+  base_url: "https://www.thordata.com"
+  default_language: "en"
+  allowed_domains:
+    - "www.thordata.com"
+    - "doc.thordata.com"
+    # Add more subdomains as discovered
+    # - "blog.thordata.com"  # Uncomment if blog is on separate subdomain
+
+sources:
+  # 1) Main sitemap (covers www.thordata.com and may include blog)
+  - type: "sitemap"
+    url: "https://www.thordata.com/sitemap.xml"
+  
+  # 2) Documentation subdomain
+  - type: "crawl"
+    url: "https://doc.thordata.com/doc"
+    max_depth: 3
+    max_urls: 500
+  
+  # 3) Blog crawl source - dedicated crawl to ensure all blog articles are collected
+  - type: "crawl"
+    url: "https://www.thordata.com/blog"
+    max_depth: 4
+    max_urls: 1000  # Increased to collect more blog articles
+  
+  # 4) Optional: Blog sitemap if separate
+  # - type: "sitemap"
+  #   url: "https://www.thordata.com/blog/sitemap.xml"
+  
+  # 5) Optional: Static URLs for important pages
+  - type: "static"
+    urls:
+      - "https://doc.thordata.com/interface-documentation"
+
+filters:
+  include:
+    # Homepage
+    - pattern: "^/$"
+      group: "Home"
+      priority: 200
+
+    # Products & Solutions
+    - pattern: "^/products"
+      group: "Products"
+      priority: 150
+
+    # Pricing
+    - pattern: "^/pricing"
+      group: "Pricing"
+      priority: 90
+
+    # Documentation
+    - pattern: "^/doc"
+      group: "Docs"
+      priority: 120
+    - pattern: "^/interface-documentation"
+      group: "Docs"
+      priority: 130
+
+    # Blog (explicitly include if you want blog articles)
+    - pattern: "^/blog"
+      group: "Blog"
+      priority: 100
+
+    # Use Cases & Resources
+    - pattern: "^/use-cases"
+      group: "Use Cases"
+      priority: 80
+    - pattern: "^/integrations"
+      group: "Integrations"
+      priority: 80
+    - pattern: "^/proxy-locations"
+      group: "Proxy Locations"
+      priority: 80
+
+  exclude:
+    # Exclude specific paths (but NOT blog if you want to include it)
+    # Remove or comment out the blog exclusion if you want blog articles
+    # - pattern: "^/blog"  # Commented out to include blog
+    
+    - pattern: "newsroom"
+    - pattern: "/news"
+    - pattern: "^/careers"
+    - pattern: "^/changelog"
+    
+    # Exclude infrastructure paths
+    - pattern: "^/cdn-cgi/"
+    
+    # Note: Language versions (vi, zh, zh-hk, etc.) are now included
+    # If you want to exclude them, uncomment the patterns below:
+    # - pattern: "^/pt/"
+    # - pattern: "^/ru/"
+    # - pattern: "^/vi/"
+    # - pattern: "^/zh/"
+
+  max_urls: 10000  # Increased to collect more URLs (including language versions and all blog articles)
+
+  # Auto-grouping: automatically group by path segment
+  auto_group: true
+
+  # Group limits (optional, limits per group)
+  group_limits:
+    Products: 200
+    Pricing: 50
+    Blog: 500  # Increased to allow more blog articles (target ~300 articles)
+    Docs: 300
+    Proxy Locations: 100
+  # Other groups have no limit by default
+
+  # Built-in default excludes (search, feeds, etc.)
+  use_default_excludes: true
+
+  # Auto-filter languages (keep only default language for llms.txt)
+  # Note: sitemap.xml will include all languages regardless of this setting
+  auto_filter_languages: true  # llms.txt only includes English (en), sitemap.xml includes all languages
+
+  # Profiles for different output tiers
+  profiles:
+    minimal:
+      include_groups: ["Home", "Products", "Pricing"]
+    recommended:
+      include_groups: ["Home", "Products", "Pricing", "Docs", "Blog", "Proxy Locations", "Other"]
+    full:
+      include_groups: ["*"]
+
+output:
+  llms_txt: "llms.txt"
+  llms_full_txt: "llms-full.txt"
+  llms_json: "llms.json"
+  # Generate sitemap.xml (includes all URLs, not filtered)
+  sitemap_xml: "sitemap.xml"
+  sitemap_apply_filters: false  # sitemap includes all collected URLs
+  # Generate sitemap_index.xml（多子域拆分版 sitemap 索引）
+  sitemap_index: "sitemap_index.xml"

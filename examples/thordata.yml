@@ -1,0 +1,89 @@
+site:
+  base_url: "https://www.thordata.com"
+  default_language: "en"
+  allowed_domains:
+    - "www.thordata.com"
+    - "doc.thordata.com"
+    # 如需抓取登录前公开的后台页，可以打开下面这行，并在 filters.exclude 中排除登录后路径
+    # - "dashboard.thordata.com"
+
+sources:
+  # 1）优先使用官网 sitemap（覆盖 www.thordata.com）
+  - type: "sitemap"
+    url: "https://www.thordata.com/sitemap.xml"
+  # 2）对文档子域做补充爬取（覆盖 doc.thordata.com）
+  - type: "crawl"
+    url: "https://doc.thordata.com/doc"
+    max_depth: 2
+    max_urls: 200
+  # 3）可选：手工补充极其关键但难以被发现的 URL
+  - type: "static"
+    urls:
+      - "https://doc.thordata.com/interface-documentation"
+
+filters:
+  include:
+    # 首页
+    - pattern: "^/$"
+      group: "Home"
+      priority: 200
+
+    # 产品与解决方案
+    - pattern: "^/products"
+      group: "Products"
+      priority: 150
+
+    # 定价
+    - pattern: "^/pricing"
+      group: "Pricing"
+      priority: 90
+
+    # 文档
+    - pattern: "^/doc"
+      group: "Docs"
+      priority: 120
+    - pattern: "^/interface-documentation"
+      group: "Docs"
+      priority: 130
+
+    # 地区节点
+    - pattern: "^/proxy-locations"
+      group: "Proxy Locations"
+      priority: 80
+
+  exclude:
+    # 排除 Blog / News / Careers 等内容
+    - pattern: "blog"
+    - pattern: "newsroom"
+    - pattern: "/news"
+    - pattern: "^/careers"
+    - pattern: "^/changelog"
+
+    # 暂时只保留英文站，排除多语言路径（可按需调整）
+    - pattern: "^/pt/"
+    - pattern: "^/ru/"
+
+  max_urls: 2000
+
+  auto_group: true
+
+  group_limits:
+    Products: 60
+    Pricing: 30
+    Proxy Locations: 30
+
+  profiles:
+    minimal:
+      include_groups: ["Home", "Products", "Pricing"]
+    recommended:
+      include_groups: ["Home", "Products", "Pricing", "Docs", "Proxy Locations", "Other"]
+    full:
+      include_groups: ["*"]
+
+output:
+  llms_txt: "llms.txt"
+  llms_full_txt: "llms-full.txt"
+  llms_json: "llms.json"
+  sitemap_xml: "sitemap.xml"
+  sitemap_index: "sitemap_index.xml"
+
