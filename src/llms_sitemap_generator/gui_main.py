@@ -1277,7 +1277,21 @@ class MainWindow(QMainWindow):
                 return
 
         try:
-            output_path = Path("llms.txt")
+            # 使用配置文件中的输出路径，如果没有则使用当前工作目录
+            output_dir = Path.cwd()
+            # 如果配置文件中有输出路径，使用配置的路径
+            if self.config and self.config.output:
+                llms_txt_path = self.config.output.llms_txt or "llms.txt"
+                output_path = Path(llms_txt_path)
+                # 如果是相对路径，转换为绝对路径
+                if not output_path.is_absolute():
+                    output_path = output_dir / output_path
+            else:
+                output_path = output_dir / "llms.txt"
+            
+            # 确保输出目录存在
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            
             # 从下拉框读取 profile（minimal / recommended / full）
             profile = None
             if hasattr(self, "profile_combo"):
@@ -1297,23 +1311,53 @@ class MainWindow(QMainWindow):
                 self.config,
                 self.all_urls,
                 output_path,
-                fetch_content=False,
+                fetch_content=True,
                 profile=profile,
                 only_groups=checked_groups if checked_groups else None,
                 max_pages=max_pages,
             )
+            
+            # 获取实际生成的文件列表
+            generated_files = []
+            if output_path.exists():
+                generated_files.append(f"- {output_path.name}")
+            if self.config and self.config.output:
+                if self.config.output.llms_full_txt:
+                    full_path = Path(self.config.output.llms_full_txt)
+                    if not full_path.is_absolute():
+                        full_path = output_dir / full_path
+                    if full_path.exists():
+                        generated_files.append(f"- {full_path.name}")
+                if self.config.output.llms_json:
+                    json_path = Path(self.config.output.llms_json)
+                    if not json_path.is_absolute():
+                        json_path = output_dir / json_path
+                    if json_path.exists():
+                        generated_files.append(f"- {json_path.name}")
+                if self.config.output.sitemap_xml:
+                    sitemap_path = Path(self.config.output.sitemap_xml)
+                    if not sitemap_path.is_absolute():
+                        sitemap_path = output_dir / sitemap_path
+                    if sitemap_path.exists():
+                        generated_files.append(f"- {sitemap_path.name}")
+            
+            files_list = "\n".join(generated_files) if generated_files else "- llms.txt"
+            
             QMessageBox.information(
                 self,
                 "生成成功",
-                f"已生成以下文件:\n"
-                f"- llms.txt\n"
-                f"- llms-full.txt\n"
-                f"- llms.json\n"
-                f"- sitemap.xml\n\n"
+                f"已生成以下文件:\n{files_list}\n\n"
                 f"保存位置: {output_path.parent.absolute()}",
             )
         except Exception as e:
-            QMessageBox.critical(self, "生成失败", f"生成时出错: {e}")
+            import traceback
+            error_details = traceback.format_exc()
+            logger.error(f"生成失败: {e}\n{error_details}")
+            QMessageBox.critical(
+                self, 
+                "生成失败", 
+                f"生成时出错: {e}\n\n详细信息请查看日志。"
+            )
 
     def load_config_file(self):
         """加载配置文件"""

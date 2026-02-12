@@ -11,8 +11,8 @@ datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 
 
 a = Analysis(
-    ['D:\\thordata_work\\llms-sitemap-generator\\src\\llms_sitemap_generator\\gui_entry.py'],
-    pathex=['D:\\thordata_work\\llms-sitemap-generator\\src'],
+    ['D:\\Thordata_Work\\llms-sitemap-generator\\src\\llms_sitemap_generator\\gui_entry.py'],
+    pathex=['D:\\Thordata_Work\\llms-sitemap-generator\\src'],
     binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,

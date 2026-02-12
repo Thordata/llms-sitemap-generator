@@ -26,3 +26,7 @@ sitemap_index.xml
 *.log
 *.tmp
 *.bak
+bash-output.txt
+
+# Ruff cache
+.ruff_cache/

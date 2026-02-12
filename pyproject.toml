@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "llms-sitemap-generator"
-version = "0.1.0"
+version = "0.2.0"
 description = "AI-friendly llms.txt & sitemap generator for websites. Crawl or import sitemaps, filter pages, and generate curated indexes for LLMs."
 readme = "README.md"
 requires-python = ">=3.9"

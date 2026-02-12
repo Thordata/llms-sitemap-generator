@@ -374,6 +374,11 @@ def write_sitemap_xml(config: AppConfig, urls: List[str], path: str) -> None:
     - lastmod / changefreq / priority are not enforced for now, keeping it simple and generic.
       Will be enhanced in future versions when reliable data sources are available.
     """
+    from pathlib import Path
+    path_obj = Path(path)
+    # Ensure output directory exists
+    path_obj.parent.mkdir(parents=True, exist_ok=True)
+    
     urlset = ET.Element(
         "urlset", attrib={"xmlns": "http://www.sitemaps.org/schemas/sitemap/0.9"}
     )
@@ -385,5 +390,5 @@ def write_sitemap_xml(config: AppConfig, urls: List[str], path: str) -> None:
 
     tree = ET.ElementTree(urlset)
     # Use utf-8 + XML declaration for compatibility with major search engines
-    tree.write(path, encoding="utf-8", xml_declaration=True)
-    logger.info(f"Wrote sitemap.xml to {path}")
+    tree.write(str(path_obj), encoding="utf-8", xml_declaration=True)
+    logger.info(f"Wrote sitemap.xml to {path_obj}")
